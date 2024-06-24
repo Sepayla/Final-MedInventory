@@ -177,6 +177,7 @@ public class login extends javax.swing.JFrame {
     }//GEN-LAST:event_usernameActionPerformed
 
     private void logInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logInActionPerformed
+        Session sess = Session.getInstance();
         if(loginAcc(username.getText(), password.getText())){
 
             if(!status.equals("Active")){
@@ -189,13 +190,14 @@ public class login extends javax.swing.JFrame {
                     //dash.name.setText(""+accname);
                     dash.setVisible(true);
                     this.dispose();
-
+                    
                 }else if(types.equals("User")){
                     JOptionPane.showMessageDialog(null, "Login Successful!");
                      pharmaDash pDash = new pharmaDash();
                      pDash.setVisible(true);
                      this.dispose();
                     //userdash.acc_id.setText(""+accname);
+                    System.out.println("" + sess.getUid());
                     
                 }else{
                     JOptionPane.showMessageDialog(null, "No account type found, Please Contact the Admin!");

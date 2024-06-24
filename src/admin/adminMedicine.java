@@ -397,7 +397,8 @@ public class adminMedicine extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel12MouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+        adminSupplier_list restock = new adminSupplier_list();
+        restock.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed

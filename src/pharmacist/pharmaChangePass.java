@@ -7,6 +7,13 @@ package pharmacist;
 
 import admin.*;
 import Configuration.DBconnector;
+import Configuration.Session;
+import Configuration.passwordHasher;
+import java.security.NoSuchAlgorithmException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -21,7 +28,8 @@ public class pharmaChangePass extends javax.swing.JFrame {
     public pharmaChangePass() {
         initComponents();
     }
-
+    
+    Session sess = Session.getInstance();
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -33,18 +41,23 @@ public class pharmaChangePass extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        password = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        newPass = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        confirmPass = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowActivated(java.awt.event.WindowEvent evt) {
+                formWindowActivated(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(77, 134, 156));
         jPanel1.setLayout(null);
@@ -55,10 +68,10 @@ public class pharmaChangePass extends javax.swing.JFrame {
         jPanel1.add(jLabel11);
         jLabel11.setBounds(30, 30, 210, 30);
 
-        jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        jTextField1.setEnabled(false);
-        jPanel1.add(jTextField1);
-        jTextField1.setBounds(30, 120, 270, 30);
+        password.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        password.setEnabled(false);
+        jPanel1.add(password);
+        password.setBounds(30, 120, 270, 30);
         jPanel1.add(jSeparator1);
         jSeparator1.setBounds(30, 60, 270, 10);
 
@@ -92,10 +105,10 @@ public class pharmaChangePass extends javax.swing.JFrame {
         jPanel1.add(jLabel2);
         jLabel2.setBounds(30, 180, 90, 20);
 
-        jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        jTextField2.setEnabled(false);
-        jPanel1.add(jTextField2);
-        jTextField2.setBounds(30, 200, 270, 30);
+        newPass.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        newPass.setEnabled(false);
+        jPanel1.add(newPass);
+        newPass.setBounds(30, 200, 270, 30);
 
         jLabel10.setFont(new java.awt.Font("SansSerif", 0, 11)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
@@ -103,10 +116,10 @@ public class pharmaChangePass extends javax.swing.JFrame {
         jPanel1.add(jLabel10);
         jLabel10.setBounds(40, 240, 90, 20);
 
-        jTextField3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        jTextField3.setEnabled(false);
-        jPanel1.add(jTextField3);
-        jTextField3.setBounds(30, 260, 270, 30);
+        confirmPass.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        confirmPass.setEnabled(false);
+        jPanel1.add(confirmPass);
+        confirmPass.setBounds(30, 260, 270, 30);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -130,8 +143,46 @@ public class pharmaChangePass extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      
+        Session session = Session.getInstance();
+        
+        DBconnector dbc =  new DBconnector();
+        
+        if (password.getText().length() < 8 || newPass.getText().length() < 8 || confirmPass.getText().length() < 8){
+            JOptionPane.showMessageDialog(null, "Password must be 8 above");
+        } else {   
+            try {        
+                String query = "SELECT * FROM users_table WHERE Id = '"+ session.getUid() +"'";
+                ResultSet resultSet = dbc.getData(query);
+                
+                if (resultSet.next()){
+                    String oldPass = resultSet.getString("Password");
+                    try {
+                        if (oldPass.equals(passwordHasher.hashPassword(password.getText()))){
+                            if (!newPass.getText().equals(confirmPass.getText())){
+                                JOptionPane.showMessageDialog(null, "Password doesn't match!");
+                            } else{
+                                dbc.updateData("UPDATE users_table SET Password = '"+ passwordHasher.hashPassword(confirmPass.getText())+"'WHERE Id = '"+ session.getUid()+"'");
+                                
+                                //LogIn logOut = new LogIn();
+                                //logOut.setVisible(true);
+                                this.dispose();
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Your old password doesn't match!");
+                        }
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(adminChangePass.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            } catch(SQLException ex){
+                System.out.println(""+ex);
+            }
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
+       
+    }//GEN-LAST:event_formWindowActivated
 
     /**
      * @param args the command line arguments
@@ -176,6 +227,7 @@ public class pharmaChangePass extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField confirmPass;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -184,8 +236,7 @@ public class pharmaChangePass extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField newPass;
+    private javax.swing.JTextField password;
     // End of variables declaration//GEN-END:variables
 }

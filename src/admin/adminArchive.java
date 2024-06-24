@@ -252,7 +252,7 @@ public class adminArchive extends javax.swing.JFrame {
         jButton8.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jButton8.setForeground(new java.awt.Color(77, 134, 156));
         jButton8.setText("Delete");
-        jPanel4.add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 420, 140, 40));
+        jPanel4.add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 420, 140, 40));
 
         jButton9.setBackground(new java.awt.Color(122, 178, 178));
         jButton9.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
