@@ -370,6 +370,7 @@ public class pharmaDash extends javax.swing.JFrame {
         pCheckout.noOfItems1.setText("" +medicineList.size());
         pCheckout.subtotal.setText("" + totals);
         pCheckout.pChange.setText("" + totals);
+        pCheckout.total.setText("" + totals);
         pCheckout.total1.setText("" + totals);
         pCheckout.subtotal1.setText("" + totals);
         
